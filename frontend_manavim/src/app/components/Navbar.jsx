@@ -1,98 +1,174 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DarkModeToggler from "./DarkModeToggler";
 import SearchBar from "./SearchBar";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { RiCloseLine, RiMenu3Line } from "react-icons/ri";
+import Image from "next/image";
 
 const Navbar = () => {
   const [toggle, setToggle] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleClick = () => setToggle(!toggle);
 
+  const navLinks = [
+    { href: "/products", label: "Ürünler" },
+    { href: "/categories", label: "Kategoriler" },
+    { href: "/orders", label: "Siparişlerim" },
+  ];
+
+  const authLinks = [
+    { href: "/login", label: "Giriş Yap", icon: "pi pi-user" },
+  ];
+
   return (
-    <nav className="sticky backdrop-blur-sm top-0 z-50 flex flex-col w-full px-6 py-3 sm:shadow-xs shadow-black dark:shadow-white">
-      {/* Üst kısım (logo ve butonlar) */}
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center justify-between space-x-10">
-          <div className="text-2xl font-bold text-gray-800 dark:text-white">
-            Manav<span className="text-green-500 dark:text-green-300">IM</span>
+    <nav
+      className={`sticky top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-lg"
+          : "bg-white dark:bg-slate-900"
+      }`}
+    >
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex-shrink-0">
+            <Link href="/" className="flex items-center space-x-2">
+          <Image
+            src="/images/ManavIM.ico" // Logo yolunu kendi projenize göre güncelleyin
+            alt="Manav Logo"
+            width={40}
+            height={40}
+            className=" rounded-full"
+          />
+              <div className="text-2xl font-bold text-slate-800 dark:text-slate-100 hover:scale-105 transition-transform duration-300">
+                Manav
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  IM
+                </span>
+              </div>
+            </Link>
           </div>
-          <DarkModeToggler />
-        </div>
-        <SearchBar />
-        <div className="md:hidden">
-          <button
-            onClick={handleClick}
-            className="cursor-pointer"
-            aria-label="Toggle Navigation"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-slate-700 dark:text-slate-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-300 ${
+                  pathname === link.href
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : ""
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <DarkModeToggler />
+          </div>
+
+          {/* Search and Auth Links */}
+          <div className="flex items-center space-x-4">
+            <SearchBar />
+            {/* Desktop Auth Links */}
+            <div className="hidden md:flex items-center space-x-4">
+              {authLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300
+                    ${
+                      pathname === link.href
+                        ? "bg-emerald-600 dark:bg-emerald-500 text-white"
+                        : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    }`}
+                >
+                  <i className={link.icon}></i>
+                  <span>{link.label}</span>
+                </Link>
+              ))}
+            </div>
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={handleClick}
+                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-300"
+                aria-label="Toggle Navigation"
+              >
+                {toggle ? (
+                  <RiCloseLine className="h-6 w-6 text-slate-700 dark:text-slate-200" />
+                ) : (
+                  <RiMenu3Line className="h-6 w-6 text-slate-700 dark:text-slate-200" />
+                )}
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Links for large screens */}
-        <div className="hidden md:flex items-center space-x-6">
-          <a href="products" className="hover:underline">
-            Products
-          </a>
-          <a href="#" className="hover:underline">
-            Categories
-          </a>
-          <a href="#" className="hover:underline">
-            Orders
-          </a>
-          <a href="#" className="hover:underline">
-            Profile
-          </a>
-        </div>
+        {/* Mobile Navigation */}
+        {toggle && (
+          <div className="md:hidden animate-fadeIn">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
+              {/* Main Navigation Links */}
+              <div className="space-y-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 ${
+                      pathname === link.href
+                        ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20"
+                        : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    }`}
+                    onClick={() => setToggle(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-slate-200 dark:border-slate-700 my-2"></div>
+
+              {/* Auth Links */}
+              <div className="space-y-1">
+                {authLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors duration-300 ${
+                      pathname === link.href
+                        ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20"
+                        : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    }`}
+                    onClick={() => setToggle(false)}
+                  >
+                    <i className={link.icon}></i>
+                    <span>{link.label}</span>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Theme Toggler */}
+              <div className="px-3 py-2">
+                <DarkModeToggler />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Links for mobile */}
-      {toggle && (
-        <div className="w-fit mt-3 py-3 px-4 space-y-3 md:hidden backdrop-blur-sm rounded-lg ">
-          <a
-            href="#"
-            className="block py-2 hover:text-green-500 dark:hover:text-green-300 transition-colors"
-            onClick={() => setToggle(false)}
-          >
-            Products
-          </a>
-          <a
-            href="#"
-            className="block py-2 hover:text-green-500 dark:hover:text-green-300 transition-colors"
-            onClick={() => setToggle(false)}
-          >
-            Categories
-          </a>
-          <a
-            href="#"
-            className="block py-2 hover:text-green-500 dark:hover:text-green-300 transition-colors"
-            onClick={() => setToggle(false)}
-          >
-            Orders
-          </a>
-          <a
-            href="#"
-            className="block py-2 hover:text-green-500 dark:hover:text-green-300 transition-colors"
-            onClick={() => setToggle(false)}
-          >
-            Profile
-          </a>
-        </div>
-      )}
     </nav>
   );
 };

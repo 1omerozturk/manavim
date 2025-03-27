@@ -9,6 +9,7 @@ require('dotenv').config()
 
 // Producer register
 exports.register = async (req, res) => {
+  console.log(req.body)
   try {
     const {
       username,

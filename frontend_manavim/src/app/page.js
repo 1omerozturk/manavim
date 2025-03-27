@@ -1,18 +1,29 @@
-import Image from 'next/image'
+'use client'
+
 import BannerSlider from './components/BannerSlider'
-import DarkModeToggler from './components/DarkModeToggler'
-import Navbar from './components/Navbar'
+import FeaturedCategories from './components/FeaturedCategories'
+import PromotionSection from './components/PromotionSection'
+import ProductHighlights from './components/ProductHighlights'
 import { ThemeProvider } from './context/ThemeContext'
+import BottomMenu from './components/BottomMenu'
+import Footer from './components/Footer'
+import HealthyFoodShowcase from './components/HealthyFoodShowcase'
 
 export default function Home() {
   return (
     <ThemeProvider>
       <div className="relative min-h-screen mx-auto bg-darksmooth">
-        <Navbar />
-        <BannerSlider />
-        <div className='h-screen'>
-
-        </div>
+        <main>
+          <BannerSlider />
+          <FeaturedCategories />
+          <PromotionSection />
+          <ProductHighlights />
+          <HealthyFoodShowcase />
+        </main>
+        <footer>
+          <Footer />
+        </footer>
+        <BottomMenu />
       </div>
     </ThemeProvider>
   )

@@ -6,11 +6,46 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
+//admin register
+exports.register = async (req, res) => {
+  try {
+    console.log(req.body)
+    const { username, email, password, fullName, role, farmName, farmLocation } = req.body
+
+    // Check if user exists
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] })
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' })
+    }
+    
+    // Validate producer required fields
+    if (role === 'producer' && (!farmName || !farmLocation)) {
+      return res.status(400).json({ 
+        message: 'Farm name and location are required for producer accounts' 
+      })
+    }
+
+    const user = new User({
+      username,
+      email,
+      password,
+      fullName,
+      role,
+      ...(role === 'producer' && { farmName, farmLocation })
+    })
+    
+    await user.save()
+    res.status(201).json({ message: 'User registered successfully' })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
 // Admin login
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body
-    const user = await User.findOne({ username, role: 'admin' })
+    const { email, password } = req.body
+    const user = await User.findOne({ email, role: 'admin' })
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' })
     }

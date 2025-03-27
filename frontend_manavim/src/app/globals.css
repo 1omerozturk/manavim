@@ -15,3 +15,55 @@
 .image-text-bg{
   @apply backdrop-blur-sm backdrop-opacity-25
 }
+
+.nav-link {
+  @apply text-gray-600 dark:text-gray-300 hover:text-green-500 dark:hover:text-green-300 
+         transition-colors duration-300 font-medium relative px-3 py-2 rounded-md;
+}
+
+.nav-link::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-green-500 dark:bg-green-300 
+         transition-all duration-300;
+}
+
+.nav-link:hover::after {
+  @apply w-full;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Navbar scroll effect */
+.navbar-scrolled {
+  @apply bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg;
+}
+
+/* Mobile menu transitions */
+.mobile-menu-enter {
+  @apply opacity-0 transform -translate-y-2;
+}
+
+.mobile-menu-enter-active {
+  @apply opacity-100 transform translate-y-0 transition-all duration-300;
+}
+
+.mobile-menu-exit {
+  @apply opacity-100 transform translate-y-0;
+}
+
+.mobile-menu-exit-active {
+  @apply opacity-0 transform -translate-y-2 transition-all duration-300;
+}
