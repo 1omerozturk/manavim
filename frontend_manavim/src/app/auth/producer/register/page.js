@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import AuthService from '../../../services/authService'
+import { useAuth } from '../../../context/AuthContext'
 
 export default function ProducerRegister() {
   const router = useRouter()
+  const { register } = useAuth()
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -26,7 +27,8 @@ export default function ProducerRegister() {
     farmDescription: '',
   })
   const [error, setError] = useState('')
-  const [role, setRole] = useState('producer')
+  const [isLoading, setIsLoading] = useState(false)
+  const [role] = useState('producer')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -50,17 +52,25 @@ export default function ProducerRegister() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match')
+      setIsLoading(false)
       return
     }
 
     try {
-      await AuthService.register(formData,role)
-      router.push('/auth/producer/login')
+      const result = await register(formData, role)
+      if (result.success) {
+        router.push('/auth/producer/login')
+      } else {
+        setError(result.error || 'Registration failed')
+      }
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'An unexpected error occurred')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -247,9 +257,12 @@ export default function ProducerRegister() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                isLoading ? "bg-indigo-400" : "bg-indigo-600 hover:bg-indigo-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
-              Register
+              {isLoading ? "Registering..." : "Register"}
             </button>
           </div>
         </form>

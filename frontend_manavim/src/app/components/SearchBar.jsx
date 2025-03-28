@@ -37,12 +37,12 @@ const SearchBar = () => {
   };
 
   return (
-    <div className="w-fit flex items-center justify-center" ref={searchRef}>
-      <div className="relative w-full md:w-xs lg:w-md">
+    <div className="w-full flex items-center justify-center" ref={searchRef}>
+      <div className="relative w-full  lg:w-md">
         <form onSubmit={handleSearch} className="relative">
           <input
             type="text"
-            placeholder="Ürün ara..."
+            placeholder="Ürün,Kategori, ara..."
             value={text}
             onChange={(e) => {
               setText(e.target.value);

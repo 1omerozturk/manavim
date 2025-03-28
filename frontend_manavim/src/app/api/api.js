@@ -1,11 +1,73 @@
 import axios from 'axios'
+import { getSession } from 'next-auth/react'
 
 const API_URL = 'http://localhost:6060/api'
 
+// Check if we're in a browser environment
+const isBrowser = () => typeof window !== 'undefined'
+
 // Auth token helper
 const getAuthHeader = () => {
-  const token = localStorage.getItem('token')
+  if (!isBrowser()) return {}
+  
+  // Try to get token from localStorage
+  const token = localStorage.getItem('user_token') // Use consistent token key
   return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+// Create axios instance with request interceptor for auth
+const axiosInstance = axios.create({
+  baseURL: API_URL
+})
+
+// Add request interceptor to handle authorization
+if (isBrowser()) {
+  axiosInstance.interceptors.request.use(
+    async (config) => {
+      console.log("API: Interceptor running to set auth headers");
+      
+      // Try to get token from localStorage first
+      let token = localStorage.getItem('user_token');
+      console.log("API: Token from localStorage:", token ? "Found" : "Not found");
+      
+      // If no token in localStorage, try to get from next-auth session
+      if (!token) {
+        try {
+          console.log("API: Trying to get token from next-auth session");
+          const session = await getSession();
+          
+          if (session?.user?.token) {
+            token = session.user.token;
+            console.log("API: Token found in next-auth session");
+            
+            // Store the token in localStorage for future requests
+            localStorage.setItem('user_token', token);
+            
+            if (session.user) {
+              localStorage.setItem('user_data', JSON.stringify(session.user));
+            }
+          } else {
+            console.log("API: No token in next-auth session");
+          }
+        } catch (sessionError) {
+          console.error("API: Error getting session:", sessionError);
+        }
+      }
+      
+      if (token) {
+        console.log("API: Setting Authorization header with token");
+        config.headers.Authorization = `Bearer ${token}`;
+      } else {
+        console.log("API: No token available for request");
+      }
+      
+      return config;
+    },
+    (error) => {
+      console.error("API: Interceptor error:", error);
+      return Promise.reject(error);
+    }
+  );
 }
 
 //admin register
@@ -29,128 +91,90 @@ export const authAPI = {
   },
 }
 
-// Customer API
+// Customer API - use the axiosInstance with token handling
 export const customerAPI = {
   // Profile
   getProfile: async () => {
-    return axios.get(`${API_URL}/customer/profile`, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.get(`/customer/profile`)
   },
   updateProfile: async (data) => {
-    return axios.put(`${API_URL}/customer/profile`, data, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.put(`/customer/profile`, data)
   },
 
   // Orders
   createOrder: async (orderData) => {
-    return axios.post(`${API_URL}/customer/orders`, orderData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.post(`/customer/orders`, orderData)
   },
   getOrders: async () => {
-    return axios.get(`${API_URL}/customer/orders`, { headers: getAuthHeader() })
+    return axiosInstance.get(`/customer/orders`)
   },
 
   // Cart
   getCart: async () => {
-    return axios.get(`${API_URL}/customer/cart`, { headers: getAuthHeader() })
+    return axiosInstance.get(`/customer/cart`)
   },
   addToCart: async (productData) => {
-    return axios.post(`${API_URL}/customer/cart`, productData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.post(`/customer/cart`, productData)
   },
   updateCart: async (cartItemId, quantity) => {
-    return axios.put(
-      `${API_URL}/customer/cart/${cartItemId}`,
-      { quantity },
-      { headers: getAuthHeader() },
-    )
+    return axiosInstance.put(`/customer/cart/${cartItemId}`, { quantity })
   },
 
   // Reviews
   addReview: async (productId, reviewData) => {
-    return axios.post(`${API_URL}/customer/reviews/${productId}`, reviewData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.post(`/customer/reviews/${productId}`, reviewData)
   },
 }
 
-// Producer API
+// Producer API - use the axiosInstance with token handling
 export const producerAPI = {
   // Products
   getProducts: async () => {
-    return axios.get(`${API_URL}/producer/products`, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.get(`/producer/products`)
   },
   addProduct: async (productData) => {
-    return axios.post(`${API_URL}/producer/products`, productData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.post(`/producer/products`, productData)
   },
   updateProduct: async (productId, productData) => {
-    return axios.put(`${API_URL}/producer/products/${productId}`, productData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.put(`/producer/products/${productId}`, productData)
   },
   deleteProduct: async (productId) => {
-    return axios.delete(`${API_URL}/producer/products/${productId}`, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.delete(`/producer/products/${productId}`)
   },
 
   // Orders
   getProducerOrders: async () => {
-    return axios.get(`${API_URL}/producer/orders`, { headers: getAuthHeader() })
+    return axiosInstance.get(`/producer/orders`)
   },
   updateOrderStatus: async (orderId, status) => {
-    return axios.put(
-      `${API_URL}/producer/orders/${orderId}`,
-      { status },
-      { headers: getAuthHeader() },
-    )
+    return axiosInstance.put(`/producer/orders/${orderId}`, { status })
   },
 }
 
-// Admin API
+// Admin API - use the axiosInstance with token handling
 export const adminAPI = {
   // Users
   getAllUsers: async () => {
-    return axios.get(`${API_URL}/admin/users`, { headers: getAuthHeader() })
+    return axiosInstance.get(`/admin/users`)
   },
   updateUserStatus: async (userId, status) => {
-    return axios.put(
-      `${API_URL}/admin/users/${userId}`,
-      { status },
-      { headers: getAuthHeader() },
-    )
+    return axiosInstance.put(`/admin/users/${userId}`, { status })
   },
 
   // Categories
   getCategories: async () => {
-    return axios.get(`${API_URL}/admin/categories`, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.get(`/admin/categories`)
   },
   addCategory: async (categoryData) => {
-    return axios.post(`${API_URL}/admin/categories`, categoryData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.post(`/admin/categories`, categoryData)
   },
 
   // Announcements
   getAnnouncements: async () => {
-    return axios.get(`${API_URL}/admin/announcements`, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.get(`/admin/announcements`)
   },
   createAnnouncement: async (announcementData) => {
-    return axios.post(`${API_URL}/admin/announcements`, announcementData, {
-      headers: getAuthHeader(),
-    })
+    return axiosInstance.post(`/admin/announcements`, announcementData)
   },
 }
 

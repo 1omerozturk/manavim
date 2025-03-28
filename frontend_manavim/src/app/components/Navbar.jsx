@@ -5,13 +5,15 @@ import DarkModeToggler from "./DarkModeToggler";
 import SearchBar from "./SearchBar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RiCloseLine, RiMenu3Line } from "react-icons/ri";
+import { RiCloseLine, RiMenu3Line, RiShoppingCartLine, RiLogoutBoxLine, RiUserLine } from "react-icons/ri";
 import Image from "next/image";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,16 +24,58 @@ const Navbar = () => {
   }, []);
 
   const handleClick = () => setToggle(!toggle);
+  
+  const handleLogout = async () => {
+    await logout();
+    setToggle(false);
+  };
 
   const navLinks = [
     { href: "/products", label: "Ürünler" },
     { href: "/categories", label: "Kategoriler" },
-    { href: "/orders", label: "Siparişlerim" },
   ];
+  
+  // Add conditional links based on auth status
+  if (isAuthenticated()) {
+    navLinks.push({ href: "/orders", label: "Siparişlerim" });
+    
+    // Add admin-specific links
+    if (user?.role === "admin") {
+      navLinks.push({ href: "/admin", label: "Panel" });
+    }
+    
+    // Add producer-specific links
+    if (user?.role === "producer") {
+      navLinks.push({ href: "/producer/products", label: "Ürünlerim" });
+    }
+  }
 
-  const authLinks = [
-    { href: "/auth", label: "Giriş Yap", icon: "pi pi-user" },
-  ];
+  const authLinks = isAuthenticated()
+    ? [
+        { 
+          href: "/profile", 
+          label: "Profilim", 
+          icon: <RiUserLine className="h-5 w-5" /> 
+        },
+        { 
+          href: "/cart", 
+          label: "Sepetim", 
+          icon: <RiShoppingCartLine className="h-5 w-5" /> 
+        },
+        { 
+          href: "#", 
+          label: "Çıkış Yap", 
+          icon: <RiLogoutBoxLine className="h-5 w-5" />,
+          onClick: handleLogout
+        },
+      ]
+    : [
+        { 
+          href: "/auth", 
+          label: "Giriş Yap", 
+          icon: <RiUserLine className="h-5 w-5" /> 
+        },
+      ];
 
   return (
     <nav
@@ -61,8 +105,14 @@ const Navbar = () => {
             </Link>
           </div>
 
+          <div className="hidden md:flex items-center justify-center">
+            <SearchBar />
+            </div>
+
+          {/* Search and Auth Links */}
+          <div className="flex items-center space-x-4">
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex sm: items-center space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -78,18 +128,14 @@ const Navbar = () => {
             ))}
             <DarkModeToggler />
           </div>
-
-          {/* Search and Auth Links */}
-          <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex">
-            <SearchBar />
-            </div>
+            
             {/* Desktop Auth Links */}
             <div className="hidden md:flex items-center space-x-4">
               {authLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={link.onClick}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300
                     ${
                       pathname === link.href
@@ -97,7 +143,7 @@ const Navbar = () => {
                         : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                     }`}
                 >
-                  <i className={link.icon}></i>
+                  {link.icon}
                   <span>{link.label}</span>
                 </Link>
               ))}
@@ -158,9 +204,16 @@ const Navbar = () => {
                         ? "text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20"
                         : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
                     }`}
-                    onClick={() => setToggle(false)}
+                    onClick={(e) => {
+                      if (link.onClick) {
+                        e.preventDefault();
+                        link.onClick();
+                      } else {
+                        setToggle(false);
+                      }
+                    }}
                   >
-                    <i className={link.icon}></i>
+                    {link.icon}
                     <span>{link.label}</span>
                   </Link>
                 ))}

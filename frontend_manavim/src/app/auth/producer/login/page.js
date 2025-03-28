@@ -1,17 +1,19 @@
- 'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import AuthService from '../../../services/authService'
+import { useAuth } from '../../../context/AuthContext'
 
 export default function ProducerLogin() {
   const router = useRouter()
+  const { login } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   })
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -24,12 +26,19 @@ export default function ProducerLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setIsLoading(true)
 
     try {
-      await AuthService.login(formData, 'producer')
-      router.push('/dashboard')
+      const result = await login(formData, 'producer')
+      if (result.success) {
+        router.push('/')
+      } else {
+        setError(result.error || 'Login failed')
+      }
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'An unexpected error occurred')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -76,9 +85,12 @@ export default function ProducerLogin() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={isLoading}
+              className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                isLoading ? "bg-indigo-400" : "bg-indigo-600 hover:bg-indigo-700"
+              } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
-              Sign in
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>

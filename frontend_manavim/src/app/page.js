@@ -8,10 +8,12 @@ import { ThemeProvider } from './context/ThemeContext'
 import BottomMenu from './components/BottomMenu'
 import Footer from './components/Footer'
 import HealthyFoodShowcase from './components/HealthyFoodShowcase'
+import { Providers } from './providers'
 
 export default function Home() {
   return (
-    <ThemeProvider>
+   <Providers>
+
       <div className="relative min-h-screen mx-auto bg-darksmooth">
         <main>
           <BannerSlider />
@@ -25,6 +27,6 @@ export default function Home() {
         </footer>
         <BottomMenu />
       </div>
-    </ThemeProvider>
+   </Providers>
   )
 }
