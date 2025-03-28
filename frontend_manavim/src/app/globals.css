@@ -1,13 +1,24 @@
 @import 'tailwindcss';
+@import 'tailwindcss/utilities';
 
 @custom-variant dark (&:where(.dark,.dark *));
 
+/* globals.css */
+@layer base {
+  :root {
+    @apply transition-colors duration-700;
+  }
+
+  .dark :where(*) {
+    @apply transition-colors duration-700;
+  }
+}
 
 .link {
   @apply hover:underline flex items-center cursor-pointer backdrop-blur-2xl opacity-85;
   @apply dark:text-gray-300;
 }
-
+ 
 .bg-darksmooth {
   @apply dark:bg-gray-800 dark:text-gray-300 bg-white transition-all duration-300;
 }

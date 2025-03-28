@@ -30,7 +30,7 @@ const Navbar = () => {
   ];
 
   const authLinks = [
-    { href: "/login", label: "Giriş Yap", icon: "pi pi-user" },
+    { href: "/auth", label: "Giriş Yap", icon: "pi pi-user" },
   ];
 
   return (
@@ -81,7 +81,9 @@ const Navbar = () => {
 
           {/* Search and Auth Links */}
           <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex">
             <SearchBar />
+            </div>
             {/* Desktop Auth Links */}
             <div className="hidden md:flex items-center space-x-4">
               {authLinks.map((link) => (
@@ -123,6 +125,9 @@ const Navbar = () => {
             <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
               {/* Main Navigation Links */}
               <div className="space-y-1">
+                <div className="flex items-center justify-center">
+                <SearchBar/>
+                </div>
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}

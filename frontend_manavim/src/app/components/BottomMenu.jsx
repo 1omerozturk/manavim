@@ -24,7 +24,7 @@ const BottomMenu = () => {
     {
       icon: PrimeIcons.USER,
       label: 'Giriş Yap',
-      path: '/login',
+      path: '/auth',
     },
     {
       icon: PrimeIcons.SHOPPING_CART,

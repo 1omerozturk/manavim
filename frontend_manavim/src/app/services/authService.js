@@ -1,32 +1,37 @@
-import { authAPI, admin } from '@/app/api/api'
+import { authAPI, admin } from '../api/api'
 
 export class AuthService {
-  static TOKEN_KEY = 'admin_token'
-  static USER_KEY = 'admin_user'
+  static TOKEN_KEY = 'user_token'
+  static USER_KEY = 'user_data'
 
-  static async login(credentials) {
+  static async login(credentials, role) {
     try {
       const response = await authAPI.login(
         credentials.email,
         credentials.password,
+        role,
       )
-      localStorage.setItem('token', response.data.token)
+      if (response.data.success && response.data.token) {
+        localStorage.setItem(this.TOKEN_KEY, response.data.token)
+        localStorage.setItem(this.USER_KEY, JSON.stringify(response.data.user))
+      }
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed')
     }
   }
 
-  static async register(userData) {
+  static async register(userData, role) {
     try {
-      // Backend modeliyle uyumlu veri gönderimi
       const { confirmPassword, ...userDataWithoutConfirm } = userData
-      const response = await authAPI.register(userDataWithoutConfirm)
-      return response.data
+      const response = await authAPI.register(userDataWithoutConfirm, role)
+      console.log(response)
+      return response
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Registration failed')
     }
   }
+
 
   static async adminRegister(userData) {
     try {
@@ -40,13 +45,10 @@ export class AuthService {
   static async adminLogin(credentials) {
     try {
       const response = await admin.login(credentials)
-      
       if (response.data.success && response.data.token) {
-        // Token ve kullanıcı bilgilerini localStorage'a kaydet
         localStorage.setItem(this.TOKEN_KEY, response.data.token)
         localStorage.setItem(this.USER_KEY, JSON.stringify(response.data.user))
       }
-      
       return response.data
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Login failed')
@@ -69,6 +71,11 @@ export class AuthService {
   static getUser() {
     const user = localStorage.getItem(this.USER_KEY)
     return user ? JSON.parse(user) : null
+  }
+
+  static getUserRole() {
+    const user = this.getUser()
+    return user?.role
   }
 }
 

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { AuthService } from '@/services/authService'
+import { AuthService } from '@/app/services/authService'
 
 export default function AdminRegister() {
   const [userData, setUserData] = useState({
