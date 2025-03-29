@@ -5,7 +5,7 @@ import DarkModeToggler from "./DarkModeToggler";
 import SearchBar from "./SearchBar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { RiCloseLine, RiMenu3Line, RiShoppingCartLine, RiLogoutBoxLine, RiUserLine } from "react-icons/ri";
+import { RiCloseLine, RiMenu3Line, RiShoppingCartLine, RiLogoutBoxLine, RiUserLine, RiAdminLine } from "react-icons/ri";
 import Image from "next/image";
 import { useAuth } from "../context/AuthContext";
 
@@ -29,54 +29,79 @@ const Navbar = () => {
     await logout();
     setToggle(false);
   };
-
+  // Temel navigasyon linkleri
   const navLinks = [
     { href: "/products", label: "Ürünler" },
     { href: "/categories", label: "Kategoriler" },
   ];
-  
-  // Add conditional links based on auth status
-  if (isAuthenticated()) {
-    navLinks.push({ href: "/orders", label: "Siparişlerim" });
-    
-    // Add admin-specific links
-    if (user?.role === "admin") {
-      navLinks.push({ href: "/admin", label: "Panel" });
-    }
-    
-    // Add producer-specific links
-    if (user?.role === "producer") {
-      navLinks.push({ href: "/producer/products", label: "Ürünlerim" });
+
+  // Rol bazlı navigasyon linkleri
+  if (isAuthenticated() && user?.role) {
+    switch(user.role) {
+      case "admin":
+        navLinks.push(
+          { href: "/admin/dashboard", label: "Dashboard" },
+        );
+        break;
+      case "producer":
+        navLinks.push(
+          { href: "/producer/dashboard", label: "Dashboard" },
+          { href: "/producer/products", label: "Ürünlerim" },
+          { href: "/producer/orders", label: "Siparişler" }
+        );
+        break;
+      case "customer":
+        navLinks.push(
+          { href: "/orders", label: "Siparişlerim" },
+          { href: "/favorites", label: "Favorilerim" }
+        );
+        break;
     }
   }
 
+  // Kimlik doğrulama linkleri
   const authLinks = isAuthenticated()
-    ? [
-        { 
-          href: "/profile", 
-          label: "Profilim", 
-          icon: <RiUserLine className="h-5 w-5" /> 
-        },
-        { 
-          href: "/cart", 
-          label: "Sepetim", 
-          icon: <RiShoppingCartLine className="h-5 w-5" /> 
-        },
-        { 
-          href: "#", 
-          label: "Çıkış Yap", 
-          icon: <RiLogoutBoxLine className="h-5 w-5" />,
-          onClick: handleLogout
-        },
-      ]
+    ? (() => {
+        const links = [
+          { 
+            href: "#", 
+            label: "Çıkış Yap", 
+            icon: <RiLogoutBoxLine className="h-5 w-5" />,
+            onClick: handleLogout
+          }
+        ];
+
+        // Role göre özel linkler
+        if (user?.role === "admin") {
+          links.unshift({ 
+            href: "/admin", 
+            label: "Yönetim Paneli", 
+            icon: <RiAdminLine className="h-5 w-5" /> 
+          });
+        } else {
+          links.unshift(
+            { 
+              href: "/profile", 
+              label: "Profilim", 
+              icon: <RiUserLine className="h-5 w-5" /> 
+            },
+            { 
+              href: "/cart", 
+              label: "Sepetim", 
+              icon: <RiShoppingCartLine className="h-5 w-5" /> 
+            }
+          );
+        }
+
+        return links;
+      })()
     : [
         { 
           href: "/auth", 
           label: "Giriş Yap", 
           icon: <RiUserLine className="h-5 w-5" /> 
-        },
+        }
       ];
-
   return (
     <nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
