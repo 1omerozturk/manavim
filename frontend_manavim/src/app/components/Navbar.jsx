@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import DarkModeToggler from "./DarkModeToggler";
 import SearchBar from "./SearchBar";
+import AppName from "./AppName";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { RiCloseLine, RiMenu3Line, RiShoppingCartLine, RiLogoutBoxLine, RiUserLine, RiAdminLine } from "react-icons/ri";
@@ -38,22 +39,10 @@ const Navbar = () => {
   // Rol bazlı navigasyon linkleri
   if (isAuthenticated() && user?.role) {
     switch(user.role) {
-      case "admin":
-        navLinks.push(
-          { href: "/admin/dashboard", label: "Dashboard" },
-        );
-        break;
       case "producer":
         navLinks.push(
           { href: "/producer/dashboard", label: "Dashboard" },
           { href: "/producer/products", label: "Ürünlerim" },
-          { href: "/producer/orders", label: "Siparişler" }
-        );
-        break;
-      case "customer":
-        navLinks.push(
-          { href: "/orders", label: "Siparişlerim" },
-          { href: "/favorites", label: "Favorilerim" }
         );
         break;
     }
@@ -64,9 +53,9 @@ const Navbar = () => {
     ? (() => {
         const links = [
           { 
-            href: "#", 
+            href: "/", 
             label: "Çıkış Yap", 
-            icon: <RiLogoutBoxLine className="h-5 w-5" />,
+            icon: <RiLogoutBoxLine className="h-5 w-5 text-red-500" />,
             onClick: handleLogout
           }
         ];
@@ -76,19 +65,19 @@ const Navbar = () => {
           links.unshift({ 
             href: "/admin", 
             label: "Yönetim Paneli", 
-            icon: <RiAdminLine className="h-5 w-5" /> 
+            icon: <RiAdminLine className="h-5 w-5 text-orange-500" /> 
           });
         } else {
           links.unshift(
             { 
               href: "/profile", 
               label: "Profilim", 
-              icon: <RiUserLine className="h-5 w-5" /> 
+              icon: <RiUserLine className="h-5 w-5 text-indigo-500" /> 
             },
             { 
               href: "/cart", 
               label: "Sepetim", 
-              icon: <RiShoppingCartLine className="h-5 w-5" /> 
+              icon: <RiShoppingCartLine className="h-5 w-5 text-green-500" /> 
             }
           );
         }
@@ -99,14 +88,14 @@ const Navbar = () => {
         { 
           href: "/auth", 
           label: "Giriş Yap", 
-          icon: <RiUserLine className="h-5 w-5" /> 
+          icon: <RiUserLine className="h-5 w-5 text-green-500" /> 
         }
       ];
   return (
     <nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-lg"
+          ? "bg-white/50 dark:bg-slate-900/50 backdrop-blur-md shadow-lg"
           : "bg-white dark:bg-slate-900"
       }`}
     >
@@ -121,12 +110,7 @@ const Navbar = () => {
             height={40}
             className=" rounded-full"
           />
-              <div className="text-2xl font-bold text-slate-800 dark:text-slate-100 hover:scale-105 transition-transform duration-300">
-                Manav
-                <span className="text-emerald-600 dark:text-emerald-400">
-                  IM
-                </span>
-              </div>
+              <AppName/>
             </Link>
           </div>
 
@@ -193,7 +177,7 @@ const Navbar = () => {
         {/* Mobile Navigation */}
         {toggle && (
           <div className="md:hidden animate-fadeIn">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-slate-900 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
               {/* Main Navigation Links */}
               <div className="space-y-1">
                 <div className="flex items-center justify-center">

@@ -12,13 +12,13 @@ export default function AuthSelection() {
   ]
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
             Welcome to Manavim
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">
             Please select your role to continue
           </p>
         </div>
@@ -29,7 +29,7 @@ export default function AuthSelection() {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base dark:text-slate-200 border-gray-300 focus:outline-none dark:bg-slate-900 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
               >
                 {roles.map((role) => (
                   <option key={role.id} value={role.id}>

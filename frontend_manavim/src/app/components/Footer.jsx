@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import AppName from './AppName';
 
 const Footer = () => {
   const footerLinks = {
@@ -55,9 +56,7 @@ const Footer = () => {
                 height={40}
                 className=" rounded-full"
               />
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
-                Manav<span className="text-green-500">IM</span>
-              </span>
+              <AppName/>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Taze, organik ve yerel ürünleri kapınıza getiriyoruz. 
@@ -115,7 +114,9 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              © {new Date().getFullYear()} Manavım. Tüm hakları saklıdır.
+              © {new Date().getFullYear()}
+              <AppName/>
+               Tüm hakları saklıdır.
             </div>
             <div className="mt-4 md:mt-0">
               <div className="flex space-x-6 text-sm text-gray-600 dark:text-gray-400">

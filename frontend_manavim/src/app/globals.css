@@ -6,11 +6,14 @@
 /* globals.css */
 @layer base {
   :root {
-    @apply transition-colors duration-700;
+    @apply transition-colors duration-300;
   }
 
   .dark :where(*) {
-    @apply transition-colors duration-700;
+    @apply transition-colors duration-300;
+  }
+  :not(.dark):where(*){
+    @apply transition-colors duration-300;
   }
 }
 

@@ -35,7 +35,7 @@ const ScrollToTop = () => {
         {isVisible && (
           <motion.button
             onClick={scrollToTop}
-            className="cursor-pointer fixed bottom-20 right-4 sm:bottom-6 sm:right-6 p-3 rounded-full bg-primary dark:text-white text-black bg-white dark:bg-black shadow-lg z-50"
+            className="cursor-pointer fixed bottom-20 right-12 sm:bottom-6 sm:right-6 p-3 rounded-full bg-primary dark:text-white text-black bg-white dark:bg-black shadow-lg z-50"
             aria-label="Yukarı çık"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
