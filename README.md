@@ -17,6 +17,9 @@ Bu proje, bir manav uygulamasını sergilemektedir. Aşağıda, uygulamanın ekr
     Tarayıcınız video etiketini desteklemiyor.
   </video>
 
+### Masaüstü Uygulama Videosu
+[Masaüstü Uygulama Videosunu İndir](images/manavim_desktop.mp4)
+
 ## Mobil Görseller
 
 ### Video
@@ -25,6 +28,9 @@ Bu proje, bir manav uygulamasını sergilemektedir. Aşağıda, uygulamanın ekr
     <source src="images/manavim_mobile.mp4" type="video/mp4">
     Tarayıcınız video etiketini desteklemiyor.
   </video>
+
+### Mobil Uygulama Videosu
+[Mobil Uygulama Videosunu İndir](images/manavim_mobile.mp4)
 
 ---
 
