@@ -22,16 +22,9 @@ Bu proje, bir manav uygulamasını sergilemektedir. Aşağıda, uygulamanın ekr
 
 ## Mobil Görseller
 
-### Video
-- Mobil uygulama videosu:
-  <video controls width="600">
-    <source src="images/manavim_mobile.mp4" type="video/mp4">
-    Tarayıcınız video etiketini desteklemiyor.
-  </video>
+### Masaüstü Uygulama Videosu
+![Masaüstü Uygulama Videosu](images/manavim_desktop.gif)
 
 ### Mobil Uygulama Videosu
-[Mobil Uygulama Videosunu İndir](images/manavim_mobile.mp4)
+![Mobil Uygulama Videosu](images/manavim_mobile.gif)
 
----
-
-Bu içerik, projenin işlevselliğini ve tasarımını daha iyi anlamanıza yardımcı olacaktır.
