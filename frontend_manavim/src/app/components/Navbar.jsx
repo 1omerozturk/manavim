@@ -113,12 +113,13 @@ const Navbar = () => {
               <AppName/>
             </Link>
           </div>
+          
+          {/* Search and Auth Links */}
 
           <div className="hidden md:flex items-center justify-center">
             <SearchBar />
             </div>
 
-          {/* Search and Auth Links */}
           <div className="flex items-center space-x-4">
           {/* Desktop Navigation */}
           <div className="hidden md:flex sm: items-center space-x-8">
